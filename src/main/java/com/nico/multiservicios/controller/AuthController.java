@@ -8,10 +8,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5173") // CORREGIDO: puerto 5173
+@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
 
-    private List<User> users = new ArrayList<>();
+    private final List<User> users = new ArrayList<>();
 
     public AuthController() {
         users.add(new User("admin", "admin123", "ADMIN"));
@@ -20,12 +20,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login(@RequestBody User loginRequest) {
-        for (User user : users) {
-            if (user.getUsername().equals(loginRequest.getUsername()) && 
-                user.getPassword().equals(loginRequest.getPassword())) {
-                return user.getRole(); // Devuelve el rol como respuesta
-            }
-        }
-        return "ERROR";
+        return users.stream()
+            .filter(user -> user.getUsername().equals(loginRequest.getUsername()) && 
+                          user.getPassword().equals(loginRequest.getPassword()))
+            .findFirst()
+            .map(User::getRole)
+            .orElse("ERROR");
     }
 }
