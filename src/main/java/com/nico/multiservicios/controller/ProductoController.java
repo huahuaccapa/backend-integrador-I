@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/v1/productos")
 
 public class ProductoController {
@@ -45,6 +46,7 @@ public class ProductoController {
                     productoExistente.setNombreProducto(productoActualizado.getNombreProducto());
                     productoExistente.setPrecio(productoActualizado.getPrecio());
                     productoExistente.setStock(productoActualizado.getStock());
+                    productoExistente.setEstadoStock(productoActualizado.getEstadoStock());
                     // Actualizar otros campos según tu modelo
 
                     Producto productoGuardado = productoRepository.save(productoExistente);

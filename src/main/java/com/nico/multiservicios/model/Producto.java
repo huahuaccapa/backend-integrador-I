@@ -26,6 +26,10 @@ public class Producto {
     @Column(name = "estado_stock")
     private EstadoStock estadoStock;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_producto")
+    private TipoProducto tipoProducto;
+
     public Producto() {
 
     }
@@ -46,14 +50,6 @@ public class Producto {
         this.nombreProducto = nombreProducto;
     }
 
-    public Double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(Double precio) {
-        this.precio = precio;
-    }
-
     public Integer getStock() {
         return stock;
     }
@@ -68,5 +64,21 @@ public class Producto {
 
     public void setEstadoStock(EstadoStock estadoStock) {
         this.estadoStock = estadoStock;
+    }
+
+    public TipoProducto getTipoProducto() {
+        return tipoProducto;
+    }
+
+    public void setTipoProducto(TipoProducto tipoProducto) {
+        this.tipoProducto = tipoProducto;
+    }
+
+    public Double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(Double precio) {
+        this.precio = precio;
     }
 }
