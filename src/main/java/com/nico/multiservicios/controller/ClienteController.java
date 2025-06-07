@@ -71,6 +71,7 @@ public class ClienteController {
 
                     cliente.setNombre(clienteActualizado.getNombre());
                     cliente.setApellidos(clienteActualizado.getApellidos());
+                    cliente.setDireccion(clienteActualizado.getDireccion());
                     cliente.setEmail(clienteActualizado.getEmail());
                     cliente.setTelefono(clienteActualizado.getTelefono());
                     cliente.setIdentificacion(clienteActualizado.getIdentificacion());

@@ -19,7 +19,7 @@ public class Cliente {
     private String nombre;
     
     private String apellidos;
-    
+    private String direccion;
     @Column(nullable = false, unique = true)
     private String email;
     
@@ -50,12 +50,16 @@ public class Cliente {
     public Timestamp getFechaRegistro() { return fechaRegistro; }
     public void setFechaRegistro(Timestamp fechaRegistro) { this.fechaRegistro = fechaRegistro; }
 
+    public String getDireccion() { return direccion;}
+    public void setDireccion(String direccion) {this.direccion = direccion;}
+
     @Override
     public String toString() {
         return "Cliente{" +
                 "id=" + id +
                 ", nombre='" + nombre + '\'' +
                 ", apellidos='" + apellidos + '\'' +
+                ", direccion='" + direccion + '\'' +
                 ", email='" + email + '\'' +
                 ", telefono='" + telefono + '\'' +
                 ", identificacion='" + identificacion + '\'' +
