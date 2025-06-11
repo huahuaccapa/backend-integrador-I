@@ -58,6 +58,17 @@ public class DetallePedidoController {
 
         detallePedidoRepository.delete(existente);
         return ResponseEntity.noContent().build();
+
+    }
+
+    // Agrega este nuevo endpoint al DetallePedidoController
+    @GetMapping("/pedido/{pedidoId}")
+    public ResponseEntity<List<DetallePedido>> getDetallesByPedidoId(@PathVariable Long pedidoId) {
+        List<DetallePedido> detalles = detallePedidoRepository.findByPedidoId(pedidoId);
+        if (detalles.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(detalles);
     }
 
 }

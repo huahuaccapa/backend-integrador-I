@@ -47,18 +47,21 @@ public class ProductoController {
     @PutMapping("/{id}")
     public Producto actualizarProducto(@PathVariable Long id, @RequestBody Producto productoActualizado) {
         return productoRepository.findById(id).map(producto -> {
+            producto.setCodigo(productoActualizado.getCodigo());
             producto.setNombreProducto(productoActualizado.getNombreProducto());
             producto.setCategoria(productoActualizado.getCategoria());
-            producto.setPrecioCompra(productoActualizado.getPrecioCompra());
-            producto.setPrecioVenta(productoActualizado.getPrecioVenta());
             producto.setStock(productoActualizado.getStock());
             producto.setStockMinimo(productoActualizado.getStockMinimo());
             producto.setStockMaximo(productoActualizado.getStockMaximo());
-            producto.setMarca(productoActualizado.getMarca());
-            producto.setEstado(productoActualizado.getEstado());
-            producto.setDescripcion(productoActualizado.getDescripcion());
-            producto.setCodigo(productoActualizado.getCodigo());
-            producto.setFechaAdquisicion(productoActualizado.getFechaAdquisicion());
+            producto.setPrecioCompra(productoActualizado.getPrecioCompra());
+            producto.setPrecioVenta(productoActualizado.getPrecioVenta());
+
+
+
+            //producto.setMarca(productoActualizado.getMarca());
+            //producto.setEstado(productoActualizado.getEstado());
+            //producto.setDescripcion(productoActualizado.getDescripcion());
+
             producto.setImagenes(productoActualizado.getImagenes());
 
             return productoRepository.save(producto);
