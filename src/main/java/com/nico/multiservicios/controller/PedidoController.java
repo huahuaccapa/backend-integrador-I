@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/v1/pedidos")
@@ -53,7 +55,6 @@ public class PedidoController {
     public ResponseEntity<Pedido> actualizarPedido(
             @PathVariable Long id,
             @RequestBody Pedido pedidoActualizado) {
-
         return pedidoRepository.findById(id)
                 .map(pedido -> {
                     pedido.setProveedorId(pedidoActualizado.getProveedorId());
@@ -61,19 +62,97 @@ public class PedidoController {
                     pedido.setMetodoPago(pedidoActualizado.getMetodoPago());
                     pedido.setFechaEntrega(pedidoActualizado.getFechaEntrega());
                     pedido.setTotal(pedidoActualizado.getTotal());
-
                     // Actualizar detalles si es necesario
                     if(pedidoActualizado.getDetallePedido() != null) {
                         pedido.getDetallePedido().clear();
                         pedido.getDetallePedido().addAll(pedidoActualizado.getDetallePedido());
                         pedido.getDetallePedido().forEach(d -> d.setPedido(pedido));
                     }
-
                     Pedido pedidoActualizadoDB = pedidoRepository.save(pedido);
                     return ResponseEntity.ok(pedidoActualizadoDB);
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    // NUEVO ENDPOINT - Actualizar solo el estado del pedido
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<?> actualizarEstadoPedido(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> estadoRequest) {
+
+        try {
+            String nuevoEstado = estadoRequest.get("estado");
+
+            // Validar que se proporcione el estado
+            if (nuevoEstado == null || nuevoEstado.trim().isEmpty()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "El estado es requerido");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Buscar el pedido
+            Optional<Pedido> pedidoOpt = pedidoRepository.findById(id);
+            if (!pedidoOpt.isPresent()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Pedido no encontrado");
+                return ResponseEntity.notFound().build();
+            }
+
+            Pedido pedido = pedidoOpt.get();
+            String estadoActual = pedido.getEstado();
+
+            // Validar transiciones de estado permitidas
+            if (!esTransicionValida(estadoActual, nuevoEstado)) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Transición de estado no válida de '" + estadoActual + "' a '" + nuevoEstado + "'");
+                error.put("estadoActual", estadoActual);
+                error.put("estadoSolicitado", nuevoEstado);
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            // Actualizar el estado
+            pedido.setEstado(nuevoEstado);
+            Pedido pedidoActualizado = pedidoRepository.save(pedido);
+
+            // Respuesta exitosa
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", pedidoActualizado.getId());
+            response.put("estadoAnterior", estadoActual);
+            response.put("estadoNuevo", nuevoEstado);
+            response.put("message", "Estado actualizado correctamente");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Error interno del servidor: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(error);
+        }
+    }
+
+    // Método privado para validar transiciones de estado
+    private boolean esTransicionValida(String estadoActual, String nuevoEstado) {
+        if (estadoActual == null || nuevoEstado == null) {
+            return false;
+        }
+
+        // Normalizar los valores eliminando espacios y convirtiendo a minúsculas
+        estadoActual = estadoActual.trim().toLowerCase();
+        nuevoEstado = nuevoEstado.trim().toLowerCase();
+
+        // Validar transiciones permitidas
+        switch (estadoActual) {
+            case "pendiente":
+                return nuevoEstado.equals("en tránsito");
+            case "en tránsito":
+                return nuevoEstado.equals("recibido");
+            case "recibido":
+                return false; // No se permite cambiar desde "recibido"
+            default:
+                return false;
+        }
+    }
+
 
     // DELETE - Eliminar un pedido
     @DeleteMapping("/{id}")
@@ -86,7 +165,6 @@ public class PedidoController {
     }
 
     // ENDPOINTS ADICIONALES
-
     // Obtener pedidos por proveedor
     @GetMapping("/proveedor/{proveedorId}")
     public List<Pedido> obtenerPedidosPorProveedor(@PathVariable Long proveedorId) {
