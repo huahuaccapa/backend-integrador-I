@@ -53,7 +53,7 @@ public class Producto {
             name = "producto_imagenes",
             joinColumns = @JoinColumn(name = "producto_id")
     )
-    @Column(name = "imagen_url")
+    @Column(name = "imagen_url", length = 1000)
     private List<String> imagenes = new ArrayList<>();
 
 
