@@ -3,6 +3,8 @@ package com.nico.multiservicios.controller;
 import com.nico.multiservicios.model.User;
 import com.nico.multiservicios.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -25,7 +27,7 @@ public class AuthController {
         if (admin == null) {
             admin = new User();
             admin.setUsername("admin");
-            admin.setPassword("admin123");
+            admin.setPassword("admin123");  // No encriptamos la contraseña para el admin
             admin.setRole("ADMIN");
             admin.setEmail("admin@multiservicios.com");
             userRepository.save(admin);
@@ -41,7 +43,10 @@ public class AuthController {
                 return ResponseEntity.status(401).body("Usuario no encontrado");
             }
 
-            if (!user.getPassword().equals(loginRequest.getPassword())) {
+            // Usar BCryptPasswordEncoder para comparar la contraseña encriptada
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword()) &&
+                    !loginRequest.getPassword().equals(user.getPassword())) {  // Comparar sin encriptación para admin
                 return ResponseEntity.status(401).body("Contraseña incorrecta");
             }
 
@@ -70,6 +75,10 @@ public class AuthController {
             if (userRepository.existsById(newUser.getUsername())) {
                 return ResponseEntity.badRequest().body("El nombre de usuario ya existe");
             }
+
+            // Encriptar la contraseña antes de guardarla
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));  // Encriptar la contraseña
 
             // Forzar rol EMPLEADO para todos los nuevos registros
             newUser.setRole("EMPLEADO");
