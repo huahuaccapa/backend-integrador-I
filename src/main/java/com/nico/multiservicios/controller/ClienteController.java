@@ -2,6 +2,7 @@ package com.nico.multiservicios.controller;
 
 import com.nico.multiservicios.model.Cliente;
 import com.nico.multiservicios.repository.ClienteRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -83,13 +84,19 @@ public class ClienteController {
     }
 
     @DeleteMapping("/clientes/{id}")
-    public ResponseEntity<String> eliminarCliente(@PathVariable Long id) {
+    public ResponseEntity<?> eliminarCliente(@PathVariable Long id) {
         return clienteRepository.findById(id)
                 .map(cliente -> {
-                    clienteRepository.delete(cliente);
-                    return ResponseEntity.ok("Cliente eliminado correctamente");
+                    try {
+                        // Esto eliminará en cascada las ventas y sus detalles
+                        clienteRepository.delete(cliente);
+                        return ResponseEntity.ok().build();
+                    } catch (DataIntegrityViolationException e) {
+                        // Manejo alternativo si la eliminación en cascada falla
+                        return ResponseEntity.status(HttpStatus.CONFLICT)
+                                .body("No se pudo eliminar el cliente. Hay datos asociados.");
+                    }
                 })
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Cliente no encontrado"));
+                .orElse(ResponseEntity.notFound().build());
     }
 }
