@@ -27,7 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/ventas")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://frontend-integrador-o1akwbu9z-huahuaccapas-projects.vercel.app"
+})
 public class VentaController {
 
     private final VentaRepository ventaRepository;

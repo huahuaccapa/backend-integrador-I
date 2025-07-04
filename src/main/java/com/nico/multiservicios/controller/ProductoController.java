@@ -10,7 +10,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/productos")
-@CrossOrigin(origins = "http://localhost:5173") // ajusta si es necesario
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://frontend-integrador-o1akwbu9z-huahuaccapas-projects.vercel.app"
+})// ajusta si es necesario
 public class ProductoController {
 
     @Autowired
