@@ -2,8 +2,8 @@ package com.nico.multiservicios.controller;
 
 import com.nico.multiservicios.model.User;
 import com.nico.multiservicios.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,9 +16,12 @@ import java.util.Map;
 public class AuthController {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(UserRepository userRepository) {
+    @Autowired
+    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
         initializeDefaultUsers();
     }
 
@@ -43,10 +46,18 @@ public class AuthController {
                 return ResponseEntity.status(401).body("Usuario no encontrado");
             }
 
-            // Usar BCryptPasswordEncoder para comparar la contraseña encriptada
-            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword()) &&
-                    !loginRequest.getPassword().equals(user.getPassword())) {  // Comparar sin encriptación para admin
+            // Verificar contraseña
+            boolean passwordMatches = false;
+            
+            // Para el admin, comparar directamente (sin encriptación)
+            if (user.getUsername().equals("admin")) {
+                passwordMatches = loginRequest.getPassword().equals(user.getPassword());
+            } else {
+                // Para usuarios normales, usar BCrypt
+                passwordMatches = passwordEncoder.matches(loginRequest.getPassword(), user.getPassword());
+            }
+
+            if (!passwordMatches) {
                 return ResponseEntity.status(401).body("Contraseña incorrecta");
             }
 
@@ -77,8 +88,7 @@ public class AuthController {
             }
 
             // Encriptar la contraseña antes de guardarla
-            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));  // Encriptar la contraseña
+            newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
 
             // Forzar rol EMPLEADO para todos los nuevos registros
             newUser.setRole("EMPLEADO");

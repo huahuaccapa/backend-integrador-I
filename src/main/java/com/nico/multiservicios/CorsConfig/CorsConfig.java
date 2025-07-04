@@ -9,7 +9,10 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173") // Asegúrate que coincida con tu URL de frontend
+                .allowedOrigins(
+                        "http://localhost:5173", // Frontend local
+                        "https://multiservicios-85dff762daa1.herokuapp.com" // Dominio en Heroku
+                )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)
