@@ -1,5 +1,6 @@
 package com.nico.multiservicios.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
@@ -36,10 +37,10 @@ public class Venta {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoVenta estado;
-    
-    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<DetalleVenta> detalles;
-    
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MetodoPago metodoPago;

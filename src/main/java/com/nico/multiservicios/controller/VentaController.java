@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -106,6 +108,7 @@ public class VentaController {
         }
     }
 
+    @Transactional
     @GetMapping
     public ResponseEntity<List<Venta>> listarVentas() {
         List<Venta> ventas = ventaRepository.findAll();
