@@ -1,4 +1,5 @@
 package com.nico.multiservicios.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -54,6 +55,7 @@ public class Producto {
             joinColumns = @JoinColumn(name = "producto_id")
     )
     @Column(name = "imagen_url", length = 1000)
+    @JsonIgnore
     private List<String> imagenes = new ArrayList<>();
 
 
