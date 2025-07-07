@@ -15,7 +15,7 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
             "detalles",
             "cliente",
             "detalles.producto",
-            "detalles.producto.imagenes"
+            "detalles.producto.imagenes"  // ✅ Necesario para evitar el error
     })
     List<Venta> findAll();
 
