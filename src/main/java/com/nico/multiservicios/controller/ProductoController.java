@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/productos")
@@ -66,5 +67,15 @@ public class ProductoController {
 
             return productoRepository.save(producto);
         }).orElse(null);
+
     }
+
+    @GetMapping("/stock-bajo")
+    public List<Producto> obtenerProductosConStockBajo() {
+        List<Producto> todosLosProductos = productoRepository.findAll();
+        return todosLosProductos.stream()
+                .filter(producto -> producto.getStock() <= producto.getStockMinimo())
+                .collect(Collectors.toList());
+    }
+
 }

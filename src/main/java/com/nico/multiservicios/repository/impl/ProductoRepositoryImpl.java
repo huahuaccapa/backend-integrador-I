@@ -17,19 +17,36 @@ public class ProductoRepositoryImpl implements ProductoRepositoryCustom {
 
     @Override
     public List<ReporteInventarioDTO> findInventarioReporte(Date fechaInicio, Date fechaFin) {
-        String queryStr = "SELECT new com.nico.multiservicios.dto.ReporteInventarioDTO(" +
-                "CAST(p.id AS string), p.nombreProducto, p.precioVenta, p.stock, p.categoria, " +
-                "(SELECT pr.nombre FROM Proveedor pr WHERE pr.id = " +
-                "(SELECT MIN(pe.proveedorId) FROM Pedido pe JOIN pe.detallePedido dp WHERE dp.modelo = p.nombreProducto)), " +
-                "DATE_FORMAT(p.fechaAdquisicion, '%d/%m/%Y')) " +
-                "FROM Producto p " +
-                "WHERE (:fechaInicio IS NULL OR p.fechaAdquisicion >= :fechaInicio) " +
-                "AND (:fechaFin IS NULL OR p.fechaAdquisicion <= :fechaFin)";
+        String sql = "SELECT " +
+                "CAST(p.id AS CHAR), " +
+                "p.nombre_producto, " +
+                "p.precio_venta, " +
+                "p.stock, " +
+                "p.categoria, " +
+                "(SELECT pr.nombre FROM proveedor pr WHERE pr.id = " +
+                "(SELECT MIN(pe.proveedor_id) FROM pedido pe " +
+                "JOIN detalle_pedido dp ON dp.pedido_id = pe.id " +
+                "WHERE dp.modelo = p.nombre_producto) " +
+                "), " +
+                "DATE_FORMAT(p.fecha_adquisicion, '%d/%m/%Y') " +
+                "FROM productos p " +
+                "WHERE (:fechaInicio IS NULL OR p.fecha_adquisicion >= :fechaInicio) " +
+                "AND (:fechaFin IS NULL OR p.fecha_adquisicion <= :fechaFin)";
 
-        return entityManager.createQuery(queryStr, ReporteInventarioDTO.class)
+        List<Object[]> results = entityManager.createNativeQuery(sql)
                 .setParameter("fechaInicio", fechaInicio)
                 .setParameter("fechaFin", fechaFin)
                 .getResultList();
+
+        return results.stream().map(row -> new ReporteInventarioDTO(
+                (String) row[0],
+                (String) row[1],
+                ((Number) row[2]).doubleValue(),
+                ((Number) row[3]).intValue(),
+                (String) row[4],
+                (String) row[5],
+                (String) row[6]
+        )).toList();
     }
 
     @Override

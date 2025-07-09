@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
 @Entity
-@Table (name = "pedidos")
+@Table (name = "pedidos")//añadiendo test
 public class Pedido {
 
         @Id

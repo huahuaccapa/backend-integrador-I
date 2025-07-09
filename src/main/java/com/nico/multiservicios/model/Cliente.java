@@ -1,5 +1,6 @@
 package com.nico.multiservicios.model;
 
+import com.nico.multiservicios.dto.ReporteClienteDTO;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
@@ -7,6 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@SqlResultSetMapping(
+        name = "ReporteClienteMapping",
+        classes = @ConstructorResult(
+                targetClass = ReporteClienteDTO.class,
+                columns = {
+                        @ColumnResult(name = "ruc", type = String.class),
+                        @ColumnResult(name = "nombre", type = String.class),
+                        @ColumnResult(name = "metodoPago", type = String.class), // <--- Asegúrate que sea String
+                        @ColumnResult(name = "fechaUltimaCompra", type = String.class),
+                        @ColumnResult(name = "comprasTotales", type = Long.class)
+                }
+        )
+)
 @Table(name = "clientes")
 public class Cliente {
     @Id

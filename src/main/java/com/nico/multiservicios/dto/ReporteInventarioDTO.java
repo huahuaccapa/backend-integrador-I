@@ -1,6 +1,7 @@
 // com.nico.multiservicios.dto.ReporteInventarioDTO
 package com.nico.multiservicios.dto;
 
+
 public class ReporteInventarioDTO {
     private String id;
     private String producto;
