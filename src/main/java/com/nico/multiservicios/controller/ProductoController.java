@@ -1,9 +1,13 @@
 package com.nico.multiservicios.controller;
 
+import com.nico.multiservicios.dto.ProductoCreateDTO;
 import com.nico.multiservicios.model.Producto;
+import com.nico.multiservicios.model.Proveedor;
 import com.nico.multiservicios.repository.ProductoRepository;
 
+import com.nico.multiservicios.repository.ProveedorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,14 +20,39 @@ public class ProductoController {
 
     @Autowired
     private ProductoRepository productoRepository;
-
+    @Autowired
+    private ProveedorRepository proveedorRepository;
     // Crear un nuevo producto
     @PostMapping
-    public Producto crearProducto(@RequestBody Producto producto) {
-        System.out.println("Producto recibido:");
-        System.out.println(producto);
+    public ResponseEntity<?> crearProducto(@RequestBody ProductoCreateDTO productoDTO) {
+        try {
+            // Buscar el proveedor por ID
+            Proveedor proveedor = proveedorRepository.findById(productoDTO.getProveedorId())
+                    .orElseThrow(() -> new RuntimeException("Proveedor no encontrado con ID: " + productoDTO.getProveedorId()));
 
-        return productoRepository.save(producto);
+            // Crear el producto
+            Producto producto = new Producto();
+            producto.setNombreProducto(productoDTO.getNombreProducto());
+            producto.setCategoria(productoDTO.getCategoria());
+            producto.setPrecioCompra(productoDTO.getPrecioCompra());
+            producto.setPrecioVenta(productoDTO.getPrecioVenta());
+            producto.setStock(productoDTO.getStock());
+            producto.setStockMinimo(productoDTO.getStockMinimo());
+            producto.setStockMaximo(productoDTO.getStockMaximo());
+            producto.setMarca(productoDTO.getMarca());
+            producto.setEstado(productoDTO.getEstado());
+            producto.setDescripcion(productoDTO.getDescripcion());
+            producto.setCodigo(productoDTO.getCodigo());
+            producto.setFechaAdquisicion(productoDTO.getFechaAdquisicion());
+            producto.setImagenes(productoDTO.getImagenes());
+            producto.setProveedor(proveedor); // ESTABLECER LA RELACIÓN
+
+            Producto productoGuardado = productoRepository.save(producto);
+            return ResponseEntity.ok(productoGuardado);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error al crear producto: " + e.getMessage());
+        }
     }
 
     // Obtener todos los productos
@@ -69,7 +98,10 @@ public class ProductoController {
         }).orElse(null);
 
     }
-
+    @GetMapping("/proveedores")
+    public List<Proveedor> listarProveedores() {
+        return proveedorRepository.findAll();
+    }
     @GetMapping("/stock-bajo")
     public List<Producto> obtenerProductosConStockBajo() {
         List<Producto> todosLosProductos = productoRepository.findAll();
