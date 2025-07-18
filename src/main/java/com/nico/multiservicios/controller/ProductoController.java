@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -127,6 +130,31 @@ public class ProductoController {
             return ResponseEntity.ok(cantidad);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(0L);
+        }
+    }
+
+    @GetMapping("/inventario-mensual")
+    public ResponseEntity<List<Map<String, Object>>> getInventarioMensual() {
+        try {
+            List<Object[]> resultados = productoRepository.getInventarioPorMeses();
+            List<Map<String, Object>> inventario = new ArrayList<>();
+
+            String[] nombresMeses = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+
+            for (Object[] resultado : resultados) {
+                int mesNumero = ((Number) resultado[0]).intValue();
+                String mesNombre = nombresMeses[mesNumero - 1];
+
+                Map<String, Object> mes = new HashMap<>();
+                mes.put("mes", mesNombre);
+                mes.put("cantidad", ((Number) resultado[1]).intValue());
+                inventario.add(mes);
+            }
+
+            return ResponseEntity.ok(inventario);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 

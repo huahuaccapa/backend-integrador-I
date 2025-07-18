@@ -29,5 +29,16 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     @Query("SELECT COUNT(p) FROM Producto p WHERE p.stock <= p.stockMinimo AND p.estado = 'ACTIVO'")
     long countProductosConStockBajo();
+
+    @Query("SELECT MONTH(CURRENT_DATE), SUM(p.stock) FROM Producto p WHERE p.estado = 'ACTIVO'")
+    Object[] getInventarioActual();
+
+    @Query("SELECT m.mes, COALESCE(SUM(p.stock), 0) " +
+            "FROM (SELECT 1 as mes UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 " +
+            "      UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 " +
+            "      UNION SELECT 9 UNION SELECT 10 UNION SELECT 11 UNION SELECT 12) m " +
+            "LEFT JOIN Producto p ON MONTH(p.fechaAdquisicion) = m.mes AND p.estado = 'ACTIVO' " +
+            "GROUP BY m.mes ORDER BY m.mes")
+    List<Object[]> getInventarioPorMeses();
 }
 

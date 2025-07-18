@@ -164,6 +164,16 @@ public class VentaController {
         }
     }
 
+    @GetMapping("/ventas-hoy")
+    public ResponseEntity<Long> getVentasHoy() {
+        try {
+            long ventasHoy = ventaRepository.countVentasHoy();
+            return ResponseEntity.ok(ventasHoy);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(0L);
+        }
+    }
+
 }
 
 class VentaRequest {
