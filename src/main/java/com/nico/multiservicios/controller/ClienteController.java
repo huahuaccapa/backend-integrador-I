@@ -102,4 +102,10 @@ public class ClienteController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+    @GetMapping("/clientes/total")
+    public ResponseEntity<Long> contarClientes() {
+        long cantidadClientes = clienteRepository.count();
+        return ResponseEntity.ok(cantidadClientes);
+    }
+
 }

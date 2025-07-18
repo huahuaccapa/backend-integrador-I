@@ -179,4 +179,10 @@ public class PedidoController {
     public List<Pedido> obtenerPedidosPorEstado(@PathVariable String estado) {
         return pedidoRepository.findByEstado(estado);
     }
+
+    // Valor total de todos los pedidos
+    @GetMapping("/valor-total")
+    public ResponseEntity<Integer> getValorTotalPedidos() {
+        return ResponseEntity.ok(pedidoRepository.sumTotalPedidos());
+    }
 }
