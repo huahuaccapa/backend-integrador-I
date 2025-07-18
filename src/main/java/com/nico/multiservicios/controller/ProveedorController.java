@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("/api/v1/proveedores")
 @CrossOrigin(origins = {
         "http://localhost:5173",
-        "https://frontend-integrador-o1akwbu9z-huahuaccapas-projects.vercel.app"
+        "https://frontend-integrador-ikmdiqdep-huahuaccapas-projects.vercel.app"
 })
 public class ProveedorController {
 
