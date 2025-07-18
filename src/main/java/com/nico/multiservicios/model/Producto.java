@@ -1,5 +1,6 @@
 package com.nico.multiservicios.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nico.multiservicios.dto.ProductoCreateDTO;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 
 @Entity
 @Table(name = "productos")
-public class Producto {
+public class Producto extends ProductoCreateDTO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,6 +50,7 @@ public class Producto {
 
     @Column(name = "fecha_adquisicion")
     private LocalDate fechaAdquisicion;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "producto_imagenes",
@@ -58,6 +60,9 @@ public class Producto {
     @JsonIgnore
     private List<String> imagenes = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "proveedor_id")
+    private Proveedor proveedor;
 
 
 
@@ -105,6 +110,13 @@ public class Producto {
 
     public void setImagenes(List<String> imagenes) {this.imagenes = imagenes;}
 
+    public Proveedor getProveedor() {
+        return proveedor;
+    }
+
+    public void setProveedor(Proveedor proveedor) {
+        this.proveedor = proveedor;
+    }
     public String toString() {
         return "Producto{" +
                 "id=" + id +

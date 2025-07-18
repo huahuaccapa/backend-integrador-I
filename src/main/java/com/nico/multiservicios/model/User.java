@@ -16,16 +16,28 @@ public class User {
 
     private String email;
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "email_verified")
     private boolean emailVerified = false;
 
+    @Column(name = "reset_password_token")
     private String resetPasswordToken;
 
+    @Column(name = "reset_password_expiry")
     private LocalDateTime resetPasswordExpiry;
+
+    @Column(name = "first_login", nullable = false)
+    private boolean firstLogin = true;
+
+    @Column(name = "password_change_required", nullable = false)
+    private boolean passwordChangeRequired = false;
 
     public User() {
         this.createdAt = LocalDateTime.now();
+        this.firstLogin = true;
+        this.passwordChangeRequired = false;
     }
 
     // Getters y Setters
@@ -92,5 +104,37 @@ public class User {
 
     public void setResetPasswordExpiry(LocalDateTime resetPasswordExpiry) {
         this.resetPasswordExpiry = resetPasswordExpiry;
+    }
+
+    public boolean isFirstLogin() {
+        return firstLogin;
+    }
+
+    public void setFirstLogin(boolean firstLogin) {
+        this.firstLogin = firstLogin;
+    }
+
+    public boolean isPasswordChangeRequired() {
+        return passwordChangeRequired;
+    }
+
+    public void setPasswordChangeRequired(boolean passwordChangeRequired) {
+        this.passwordChangeRequired = passwordChangeRequired;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", password='[PROTECTED]'" +
+                ", role='" + role + '\'' +
+                ", email='" + email + '\'' +
+                ", createdAt=" + createdAt +
+                ", emailVerified=" + emailVerified +
+                ", resetPasswordToken='" + resetPasswordToken + '\'' +
+                ", resetPasswordExpiry=" + resetPasswordExpiry +
+                ", firstLogin=" + firstLogin +
+                ", passwordChangeRequired=" + passwordChangeRequired +
+                '}';
     }
 }

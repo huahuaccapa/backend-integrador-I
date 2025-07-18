@@ -29,7 +29,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/ventas")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://frontend-integrador-o1akwbu9z-huahuaccapas-projects.vercel.app"
+})
 public class VentaController {
 
     private final VentaRepository ventaRepository;
@@ -147,6 +150,33 @@ public class VentaController {
         List<Producto> productos = productoRepository.findByStockGreaterThan(0);
         return ResponseEntity.ok(productos);
     }
+
+    @GetMapping("/total-ventas")
+    public ResponseEntity<Long> getTotalVentas() {
+        long totalVentas = ventaRepository.count();
+        return ResponseEntity.ok(totalVentas);
+    }
+
+    @GetMapping("/ingresos-totales")
+    public ResponseEntity<BigDecimal> getIngresosTotales() {
+        try {
+            BigDecimal ingresosTotales = ventaRepository.sumTotalIngresos();
+            return ResponseEntity.ok(ingresosTotales);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(BigDecimal.ZERO);
+        }
+    }
+
+    @GetMapping("/ventas-hoy")
+    public ResponseEntity<Long> getVentasHoy() {
+        try {
+            long ventasHoy = ventaRepository.countVentasHoy();
+            return ResponseEntity.ok(ventasHoy);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(0L);
+        }
+    }
+
 }
 
 class VentaRequest {

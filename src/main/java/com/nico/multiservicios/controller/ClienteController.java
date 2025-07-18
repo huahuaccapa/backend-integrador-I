@@ -20,7 +20,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://frontend-integrador-o1akwbu9z-huahuaccapas-projects.vercel.app"
+})
 public class ClienteController {
 
     private final ClienteRepository clienteRepository;
@@ -99,4 +102,10 @@ public class ClienteController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+    @GetMapping("/clientes/total")
+    public ResponseEntity<Long> contarClientes() {
+        long cantidadClientes = clienteRepository.count();
+        return ResponseEntity.ok(cantidadClientes);
+    }
+
 }

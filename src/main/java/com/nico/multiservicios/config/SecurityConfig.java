@@ -15,14 +15,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Deshabilitamos CSRF para APIs REST
-            .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/**").permitAll()
-                    .requestMatchers("/api/reportes/**").permitAll()// Permitir acceso a todos los endpoints de API
-                .anyRequest().authenticated()
-            )
-            .httpBasic(httpBasic -> httpBasic.disable()) // Deshabilitar autenticación HTTP básica
-            .formLogin(form -> form.disable()); // Deshabilitar form login
+                .csrf(csrf -> csrf.disable()) // Deshabilitamos CSRF para APIs REST
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/api/reportes/**").permitAll()
+                        .requestMatchers("/api/auth/register").permitAll() // 👈 Añadido sin modificar nada más
+                        .anyRequest().authenticated()
+                )
+                .httpBasic(httpBasic -> httpBasic.disable()) // Deshabilitar autenticación HTTP básica
+                .formLogin(form -> form.disable()); // Deshabilitar form login
 
         return http.build();
     }
