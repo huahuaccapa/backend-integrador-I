@@ -11,7 +11,7 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:5173", // Frontend local
-                        "https://multiservicios-85dff762daa1.herokuapp.com" // Dominio en Heroku
+                        "https://frontend-integrador-o1akwbu9z-huahuaccapas-projects.vercel.app" // Dominio en Heroku
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")

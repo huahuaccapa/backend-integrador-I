@@ -15,7 +15,10 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/productos")
-@CrossOrigin(origins = "http://localhost:5173") // ajusta si es necesario
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://frontend-integrador-o1akwbu9z-huahuaccapas-projects.vercel.app"
+})
 public class ProductoController {
 
     @Autowired
