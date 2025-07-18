@@ -110,4 +110,24 @@ public class ProductoController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/total-stock")
+    public ResponseEntity<Integer> getTotalStock() {
+        try {
+            Integer totalStock = productoRepository.sumTotalStock();
+            return ResponseEntity.ok(totalStock);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(0);
+        }
+    }
+
+    @GetMapping("/count/stock-bajo")
+    public ResponseEntity<Long> contarProductosConStockBajo() {
+        try {
+            long cantidad = productoRepository.countProductosConStockBajo();
+            return ResponseEntity.ok(cantidad);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(0L);
+        }
+    }
+
 }

@@ -5,6 +5,7 @@ import com.nico.multiservicios.dto.ReporteClienteDTO;
 import com.nico.multiservicios.dto.ReporteInventarioDTO;
 import com.nico.multiservicios.dto.ReporteVentaDTO;
 import com.nico.multiservicios.dto.ReporteStockBajoDTO;
+import com.nico.multiservicios.repository.DetalleVentaRepository;
 import com.nico.multiservicios.repository.custom.ClienteRepositoryCustom;
 import com.nico.multiservicios.repository.custom.ProductoRepositoryCustom;
 import com.nico.multiservicios.repository.custom.VentaRepositoryCustom;
@@ -12,6 +13,7 @@ import com.nico.multiservicios.service.ExcelExportService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,10 +29,14 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:5173")
 public class ReporteController {
 
+    @Autowired
+    private DetalleVentaRepository detalleVentaRepository;
+
     private final VentaRepositoryCustom ventaRepositoryCustom;
     private final ClienteRepositoryCustom clienteRepositoryCustom;
     private final ProductoRepositoryCustom productoRepositoryCustom;
     private final ExcelExportService excelExportService;
+
 
     @Autowired
     public ReporteController(VentaRepositoryCustom ventaRepositoryCustom,
@@ -124,4 +130,12 @@ public class ReporteController {
         workbook.write(response.getOutputStream());
         workbook.close();
     }
+
+    //Obtiene los 5 productos mas vendidos
+    @GetMapping("/top-productos")
+    public List<Object[]> obtenerTopProductosVendidos() {
+        return detalleVentaRepository.findTopProductosVendidos(PageRequest.of(0, 5));
+    }
+
+
 }

@@ -23,5 +23,11 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     @Query("SELECT p FROM Producto p LEFT JOIN FETCH p.proveedor WHERE p.id = :id")
     Optional<Producto> findByIdWithProveedor(@Param("id") Long id);
+
+    @Query("SELECT COALESCE(SUM(p.stock), 0) FROM Producto p WHERE p.estado = 'ACTIVO'")
+    Integer sumTotalStock();
+
+    @Query("SELECT COUNT(p) FROM Producto p WHERE p.stock <= p.stockMinimo AND p.estado = 'ACTIVO'")
+    long countProductosConStockBajo();
 }
 

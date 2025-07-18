@@ -147,6 +147,23 @@ public class VentaController {
         List<Producto> productos = productoRepository.findByStockGreaterThan(0);
         return ResponseEntity.ok(productos);
     }
+
+    @GetMapping("/total-ventas")
+    public ResponseEntity<Long> getTotalVentas() {
+        long totalVentas = ventaRepository.count();
+        return ResponseEntity.ok(totalVentas);
+    }
+
+    @GetMapping("/ingresos-totales")
+    public ResponseEntity<BigDecimal> getIngresosTotales() {
+        try {
+            BigDecimal ingresosTotales = ventaRepository.sumTotalIngresos();
+            return ResponseEntity.ok(ingresosTotales);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(BigDecimal.ZERO);
+        }
+    }
+
 }
 
 class VentaRequest {
