@@ -78,4 +78,10 @@ public class ProductoController {
                 .collect(Collectors.toList());
     }
 
+    // Agrega al final del controlador
+    public void setProductoRepository(ProductoRepository productoRepository) {
+        this.productoRepository = productoRepository;
+    }
+
+
 }
