@@ -56,7 +56,6 @@ public class Producto {
             joinColumns = @JoinColumn(name = "producto_id")
     )
     @Column(name = "imagen_url", length = 1000)
-    @JsonIgnore
     private List<String> imagenes = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
